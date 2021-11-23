@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Policy\Models;
 
-use App\Scopes\checkTrash;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @method static available()
+ */
 class Policy extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'date_uploaded',
         'acknowledgement_required',
@@ -27,9 +26,16 @@ class Policy extends Model
         'is_trashed',
     ];
 
-
-    protected static function booted()
+    public function scopeAvailable($query)
     {
-        static::addGlobalScope(new checkTrash());
+        return $query->where('is_trashed', '=', false);
+    }
+
+
+    public function moveToTrash()
+    {
+        $this->update([
+            'is_trashed' => true
+        ]);
     }
 }
