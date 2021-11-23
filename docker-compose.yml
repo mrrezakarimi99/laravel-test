@@ -1,0 +1,43 @@
+version: '3'
+services:
+    mysql:
+        hostname: test_mysql
+        image : mysql:8.0
+        container_name : test_mysql
+        restart: unless-stopped
+        env_file: ./Docker/mysql/.env
+        ports:
+            - "3309:3306"
+        volumes : 
+            - "./Docker/data/mysql/test:/var/lib/mysql"
+            - "./Docker/data/mysql/backup:/data/backups"
+        networks:
+            - test_network
+    php :  
+        hostname: test_php
+        build : ./Docker/php
+        container_name : test_php
+        restart: unless-stopped
+        ports:
+            - "9101:9000"
+        volumes :
+            - "./Web:/var/www/test"
+        networks:
+            - test_network
+    nginx :
+        hostname : test_nginx
+        build : ./Docker/nginx 
+        container_name : test_nginx
+        restart : always
+        ports :
+            - "8082:80"
+        volumes :  
+            - "./Docker/nginx/conf.d:/etc/nginx/conf.d/"
+            - "./Web:/var/www/test"
+        links:
+            - php
+        networks :
+            - test_network
+networks:
+    test_network:
+        driver: bridge

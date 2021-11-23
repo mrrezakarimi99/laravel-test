@@ -1,138 +1,145 @@
 
-Project Structure :
+# Panel Web Service
 
-1- Create a Laravel project with a version upper than 8 .
+## Overview
 
-2- Dockerize project without using Laravel Sail .
+1. [Install prerequisites](#install-prerequisites)
 
-Use these containers :
+   Before installing project make sure the following prerequisites have been met.
 
-***- PHP-FPM**
+2. [Clone the project](#clone-the-project)
 
-***- MySQL**
+   We’ll download the code from its repository on GitHub.
 
-***- NginX**
+5. [Run the application](#run-the-application)
 
-3- Create a module with the name of **Policy**. ( Don’t use packages for modularizing project )
+   By this point we’ll have all the project pieces in place.
+___
 
-* This module should include all of needed files and folders. ( Models, Migration, Factory, Seeder , … )
+## Install prerequisites
 
-4- Create a model &  migration considering these fields :
+For now, this project has been mainly created for Unix `(Linux/MacOS)`. Perhaps it could work on Windows.
 
-**- title ( String field )  ( Max 80 Characters, Min 8 Characters ) ( Required )**
+All requisites should be available for your distribution. The most important are :
 
-**- date_uploaded ( Timestamp field ) ( Required )**
+* [Git](https://www.digitalocean.com/community/tutorials/how-to-install-git-on-ubuntu-20-04)
+* [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
+* [Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 
-**- acknowledgement_required ( Values of this field could be Yes or No )**
+Check if `docker-compose` is already installed by entering the following command :
 
-**- file ( This is the path that file is saved ) ( JPG, PNG, PDF )**
+```sh
+which docker-compose
+```
 
-**- file_type ( String )**
+Check Docker Compose compatibility :
 
-**- is_trashed ( Yes / No )**
+* [Compose file version 3 reference](https://docs.docker.com/compose/compose-file/)
 
-*** Use best optimized field types for each one of them .**
+The following is optional but makes life more enjoyable :
 
-*** Use SoftDelete as well.**
+```sh
+which make
+```
 
-5- Create a Global Scope that returns records which ( is_trashed is Yes )
+On Ubuntu and Debian these are available in the meta-package build-essential. On other distributions, you may need to install the GNU C++ compiler separately.
 
-Webservices :
+```sh
+sudo apt install build-essential
+```
 
-**1-  Index & Search**
+### Images to use
 
-**Description**: It is responsible for indexing also searching policies .
+* [Nginx](https://hub.docker.com/_/nginx/)
+* [MySQL](https://hub.docker.com/_/mysql/)
+* [PHP-FPM](https://hub.docker.com/r/nanoninja/php-fpm/)
+* [Composer](https://hub.docker.com/_/composer/)
 
-( Consider returning policies that are not deleted, with is_trashed = No )
+You should be careful when installing third party web servers such as MySQL or Nginx.
 
-**Method**: GET
+This project use the following ports :
 
-**Url** : api/v1/policies/
+| Server     | Port |
+|------------|------|
+| MySQL      | 3309 |
+| Nginx      | 8082 |
+| php        | 9101 |
 
-**Response**: returns a collection of policies .
 
-**Parameters** :
+___
 
-**q**: use this parameter to search through policies using their title,
+## Clone the project
 
-If this field was null Just return all the policies
+To install [Git](https://github.com/mrrezakarimi99/TestModules.git), download it and install following the instructions :
 
-**Tests ( Feature ) :**
+```sh
+git clone https://github.com/mrrezakarimi99/TestModules.git
+```
 
-1- test that this webservice returns paginated records.
+Go to the project directory :
 
-----------------------------------------------------------------------------------------------------------------------------------------
+```sh
+cd TestModules
+```
 
-**2- Store :**
+### Project tree
 
-**Description** :  It is responsible for creating a Policy.
+```sh
+.
+├── Docker
+│   └── data
+│       ├── mysql
+│   └── mysql
+│       ├── .env
+│       └── .env.example
+│   └── nginx
+│       └── conf.d
+│            ├── dumps
+│       └── Dockerfile
+│   └── php
+│       └── Dockerfile
+└── web
+    └── public
+        └── index.php
+├── docker-compose.yml
+├── README.md
+        
+```
 
-**Method** : POST
+## Run the application
 
-**Url** : api/v1/policies
+1. Copying the composer configuration file :
 
-**Response**: returns the created item with proper response format.
+    ```sh
+    cp web/.env.example web/.env
+    cp Docker/mysql/.env.example Docker/mysql/.env
+    ```
 
-**Parameters**:
+2. Start the application :
 
-**- title**
+    ```sh
+    docker-compose up -d --build
+    ```
 
-**- acknowledgement_required**
+   **Please wait this might take a several minutes...**
 
-**- file**
+    ```sh
+    docker-compose logs -f # Follow log output
+    ```
+3. run migration
 
-**Tests ( Feature ) :**
+    ```sh
+    docker exec  -it test_php php artisan migrate
+    ```
+4. Stop and clear services
 
-1- test that with a correct request body ( parameters ) this webservice works fine.
+    ```sh
+    sudo docker-compose down -v
+    ```
 
-----------------------------------------------------------------------------------------------------------------------------------------
+___
 
-**3- Trash:**
+## Help us
 
-**Description**:
+Any thought, feedback or (hopefully not!)
 
-It is responsible for trashing a policy, means setting is_trashed field to Yes.
-
-**Method**: GET
-
-**Url** : api/v1/policies/{policy_id}/trash
-
-**Response** : returns the result ( success or false, with proper message )
-
-**Tests ( Feature ) :**
-
-1- test that this webservice can successfully trash a non_trashed policy .
-
-----------------------------------------------------------------------------------------------------------------------------------------
-
-**4- Delete**
-
-**Description**: It is responsible for deleting a policy .
-
-**Method**: DELETE
-
-**URL** : api/v1/policies/{policy_id}
-
-**Response**:
-
-returns the result ( success or false, with proper message )
-
-**Tests ( Feature ) :**
-
-1- test that this webservice can successfully delete a  policy .
-
-Notes :
-
-* A policy first get trashed then get’s deleted.
-
-* Use best practices that you know .
-
-* Commit each task with proper message.
-
-Fork this repository : https://github.com/AmajGroup/laravel-test
-
-* Use validation, …
-
-* Use proper formats for returning responses.
-
-* Any question about the tasks, just Ask.

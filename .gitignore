@@ -1,0 +1,3 @@
+/Docker/mysql/.env
+/Docker/data/*
+.idea
