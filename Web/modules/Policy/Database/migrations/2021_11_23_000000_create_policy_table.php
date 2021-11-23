@@ -16,12 +16,11 @@ class createPolicyTable extends Migration
         Schema::create('policies', function (Blueprint $table) {
             $table->string('title' , '80');
             $table->timestamp('date_uploaded');
-            $table->enum('acknowledgement_required' , ['Yes' , 'No']);
+            $table->boolean('acknowledgement_required');
             $table->string('file')->nullable();
             $table->string('file_type')->nullable();
-            $table->tinyInteger('is_trashed');
+            $table->boolean('is_trashed');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

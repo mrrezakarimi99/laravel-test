@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Scope;
 
 class checkTrash implements Scope
 {
-
     public function apply(Builder $builder, Model $model)
     {
         $builder->where('is_trashed', '=', true);
