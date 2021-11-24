@@ -4,6 +4,9 @@ namespace Modules\Policy\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property mixed $file
+ */
 class PolicyRequest extends FormRequest
 {
     /**
@@ -13,7 +16,7 @@ class PolicyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +27,9 @@ class PolicyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title'                    => 'required|min:8',
+            'acknowledgement_required' => 'required|boolean',
+            'file'                     => 'required|mimes:jpg,png,pdf|max:4096:'
         ];
     }
 }

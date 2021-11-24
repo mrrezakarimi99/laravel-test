@@ -4,14 +4,17 @@ namespace Modules\Policy\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Policy\Scopes\checkTrash;
+use Modules\Policy\Traits\SaveFile;
 
 /**
- * @method static available()
+ * @method static create(array $validate)
  */
 class Policy extends Model
 {
-    use HasFactory;
+    use HasFactory , SaveFile;
 
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -26,11 +29,15 @@ class Policy extends Model
         'is_trashed',
     ];
 
-    public function scopeAvailable($query)
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
     {
-        return $query->where('is_trashed', '=', false);
+        static::addGlobalScope(new checkTrash());
     }
-
 
     public function moveToTrash()
     {
