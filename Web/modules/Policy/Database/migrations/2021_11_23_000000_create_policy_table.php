@@ -14,13 +14,13 @@ class createPolicyTable extends Migration
     public function up()
     {
         Schema::create('policies', function (Blueprint $table) {
+            $table->id();
             $table->string('title' , '80');
             $table->timestamp('date_uploaded');
-            $table->boolean('acknowledgement_required');
+            $table->boolean('acknowledgement_required')->default(false);
             $table->string('file')->nullable();
             $table->string('file_type')->nullable();
-            $table->boolean('is_trashed');
-            $table->timestamps();
+            $table->boolean('is_trashed')->default(false);
         });
     }
 
