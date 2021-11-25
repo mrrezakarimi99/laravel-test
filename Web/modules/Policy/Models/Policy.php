@@ -2,8 +2,10 @@
 
 namespace Modules\Policy\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Policy\Database\Factories\PolicyFactory;
 use Modules\Policy\Scopes\checkTrash;
 use Modules\Policy\Traits\SaveFile;
 
@@ -28,6 +30,16 @@ class Policy extends Model
         'file_type',
         'is_trashed',
     ];
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return PolicyFactory::new();
+    }
 
     /**
      * The "booted" method of the model.
